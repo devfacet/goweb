@@ -1,0 +1,27 @@
+sudo: false
+
+language: go
+go:
+  - 1.9
+
+install:
+  #- go get github.com/golang/dep/cmd/dep
+  - go get github.com/golang/lint/golint
+  - go get github.com/modocache/gover
+  - go get github.com/mattn/goveralls
+
+script:
+  #- dep ensure
+  - go build .
+  - ./test.sh
+  - mkdir -p reports
+  - go test -v -coverprofile=reports/coverage-content.coverprofile -covermode=count github.com/devfacet/goweb/content
+  - go test -v -coverprofile=reports/coverage-log.coverprofile -covermode=count github.com/devfacet/goweb/log
+  - go test -v -coverprofile=reports/coverage-page.coverprofile -covermode=count github.com/devfacet/goweb/page
+  - go test -v -coverprofile=reports/coverage-request.coverprofile -covermode=count github.com/devfacet/goweb/request
+  - go test -v -coverprofile=reports/coverage-route.coverprofile -covermode=count github.com/devfacet/goweb/route
+  - go test -v -coverprofile=reports/coverage-server.coverprofile -covermode=count github.com/devfacet/goweb/server
+  - gover reports/ reports/coverage-all.coverprofile
+  - go tool cover -func=reports/coverage-all.coverprofile
+  - goveralls -service=travis-ci -repotoken $COVERALLS_TOKEN -covermode=count -coverprofile=reports/coverage-all.coverprofile
+
