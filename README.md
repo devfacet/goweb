@@ -2,7 +2,7 @@
 
 [![Release][release-image]][release-url] [![Build Status][build-image]][build-url] [![Coverage][coverage-image]][coverage-url] [![GoDoc][doc-image]][doc-url]
 
-A Go library for building tiny web applications such as dashboards, REST APIs, etc.
+A Go library for building tiny web applications such as dashboards, SPAs, etc.
 
 ## Features
 
