@@ -420,12 +420,12 @@ func TestSaveFile(t *testing.T) {
 		defer os.Remove(tf)
 
 		So(len(ff), ShouldEqual, 1)
-		So(ff[0].SaveFile(tf, 644), ShouldBeNil)
+		So(ff[0].SaveFile(tf), ShouldBeNil)
 	})
 
 	Convey("should fail to save a form file (header)", t, func() {
 		ff := request.FormFile{}
-		So(ff.SaveFile("./test.txt.tmp", 644), ShouldBeError, errors.New("invalid file header"))
+		So(ff.SaveFile("./test.txt.tmp"), ShouldBeError, errors.New("invalid file header"))
 	})
 
 	Convey("should fail to save a form file (open)", t, func() {
@@ -454,7 +454,7 @@ func TestSaveFile(t *testing.T) {
 		}
 
 		So(len(ff), ShouldEqual, 1)
-		So(ff[0].SaveFile("./test.txt.tmp", 644), ShouldBeError, fmt.Errorf("failed to save file due to open %s: no such file or directory", tf))
+		So(ff[0].SaveFile("./test.txt.tmp"), ShouldBeError, fmt.Errorf("failed to save file due to open %s: no such file or directory", tf))
 	})
 
 	Convey("should fail to save a form file (invalid file name)", t, func() {
@@ -478,14 +478,14 @@ func TestSaveFile(t *testing.T) {
 		ff := req.FormFiles()
 
 		So(len(ff), ShouldEqual, 1)
-		So(ff[0].SaveFile("", 644), ShouldBeError, errors.New("invalid file name"))
-		So(ff[0].SaveFile("./test.txt/test.txt", 644), ShouldBeError, errors.New("failed to save file due to mkdir test.txt: not a directory"))
+		So(ff[0].SaveFile(""), ShouldBeError, errors.New("invalid file name"))
+		So(ff[0].SaveFile("./test.txt/test.txt"), ShouldBeError, errors.New("failed to save file due to mkdir test.txt: not a directory"))
 		defer os.Remove("./tmp/")
-		So(ff[0].SaveFile("./tmp/.", 644), ShouldBeError, errors.New("failed to save file due to open tmp/.: is a directory"))
+		So(ff[0].SaveFile("./tmp/."), ShouldBeError, errors.New("failed to save file due to open tmp/.: is a directory"))
 	})
 }
 
-func TestCopyTo(t *testing.T) {
+func TestWriteTo(t *testing.T) {
 	Convey("should copy to", t, func() {
 		f, err := os.Open("test.txt")
 		defer f.Close()
@@ -510,7 +510,7 @@ func TestCopyTo(t *testing.T) {
 		defer os.Remove(tf)
 
 		So(len(ff), ShouldEqual, 1)
-		n, err := ff[0].CopyTo(ioutil.Discard)
+		n, err := ff[0].WriteTo(ioutil.Discard)
 		So(n, ShouldBeGreaterThan, 0)
 		So(err, ShouldBeNil)
 	})
@@ -541,7 +541,7 @@ func TestCopyTo(t *testing.T) {
 		}
 
 		So(len(ff), ShouldEqual, 1)
-		n, err := ff[0].CopyTo(ioutil.Discard)
+		n, err := ff[0].WriteTo(ioutil.Discard)
 		So(n, ShouldEqual, 0)
 		So(err, ShouldBeError, fmt.Errorf("failed to write due to open %s: no such file or directory", tf))
 	})

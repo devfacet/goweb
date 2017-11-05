@@ -49,7 +49,7 @@ func (ff *FormFile) FileHeader() *multipart.FileHeader {
 }
 
 // SaveFile saves the form file
-func (ff *FormFile) SaveFile(name string, perm os.FileMode) error {
+func (ff *FormFile) SaveFile(name string) error {
 	if name == "" {
 		return errors.New("invalid file name")
 	}
@@ -65,13 +65,13 @@ func (ff *FormFile) SaveFile(name string, perm os.FileMode) error {
 	}
 	defer mf.Close()
 
-	// Open new file
+	// Create file
 	base := path.Base(name)
 	dir := path.Dir(name)
 	if err := os.MkdirAll(dir, 0755); err != nil {
 		return fmt.Errorf("failed to save file due to %s", err.Error())
 	}
-	nf, err := os.OpenFile(fmt.Sprintf("%s/%s", dir, base), os.O_WRONLY|os.O_CREATE, perm)
+	nf, err := os.Create(fmt.Sprintf("%s/%s", dir, base))
 	if err != nil {
 		return fmt.Errorf("failed to save file due to %s", err.Error())
 	}
@@ -82,8 +82,8 @@ func (ff *FormFile) SaveFile(name string, perm os.FileMode) error {
 	return err
 }
 
-// CopyTo copies the form file to the given destination
-func (ff *FormFile) CopyTo(dst io.Writer) (written int64, err error) {
+// WriteTo writes the form file to the given destination
+func (ff *FormFile) WriteTo(dst io.Writer) (written int64, err error) {
 	// Open form file
 	mf, err := ff.fileHeader.Open()
 	if err != nil {
