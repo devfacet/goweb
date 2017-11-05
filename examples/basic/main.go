@@ -1,4 +1,4 @@
-// A basic web app
+// A basic app
 package main
 
 import (
